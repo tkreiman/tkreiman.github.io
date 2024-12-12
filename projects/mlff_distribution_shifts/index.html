@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Understanding and Mitigating Distribution Shifts for Machine Learning Force Fields.">
+  <meta name="keywords" content="distribution, shifts, force, field, machine learning">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Understanding and Mitigating Distribution Shifts for Machine Learning Force Fields</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://tkreiman.github.io">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <!-- <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div> -->
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Understanding And Mitigating Distribution Shifts for MLFFs</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://tkreiman.github.io">Tobias Kreiman</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://a1k12.github.io/">Aditi Krishnapriyan</a><sup>1</sup>,</span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>UC Berkeley,</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper Coming Soon</span>
+                </a>
+              </span>
+              <!-- <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+              <!-- Video Link.
+              <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code Coming Soon</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/teaser.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
+        free-viewpoint
+        portraits.
+      </h2>
+    </div>
+  </div>
+</section> -->
+
+<section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Overview</h2>
+      <div class="columns">
+        <div class="column">
+          <div class="content has-text-justified">
+            <p>
+              The standard paradigm for improving instruction following policies involves manually collecting 
+              additional robot data, labelling it with language instructions, and then finetuning the policy on this data.
+              This process is expensive, and hard to scale up without huge human effort.
+              <!-- This is an expensive endeavor, especially when improvement is desired over a multitude of environments. -->
+              Can we instead <b>deploy robot fleets to collect large-scale datasets without human supervision</b>, and
+              <b>use that data to self-improve the policy?</b>
+            </p>
+            <p>
+              We propose a particular formulation of an autonomous improvement loop, which we call <b>SOAR</b>,
+              that enables self-improvement of a multi-task language-conditioned policy. The key ideas are:
+              <ol>
+                <b><li>Use VLMs and diffusion models to help guide large-scale autonomous data collection.</li></b>
+                <b><li>Decouple language understanding from robotic control, so semantic understanding benefits from internet-scale pre-training and low-level control improve with self-supervision.</li></b>
+              </ol>
+            </p>
+            <hr>
+            <p>
+              SOAR decouples a language-conditioned policy into an <b>image-goal conditioned policy</b> 
+              and a <b>language-conditioned image subgoal generator</b>. The benefit of such a formulation is that any autonomously collected data
+              can be used to improve the policy with an entirely self-supervised learning algorithm, namely <b>hindsight-relabeled 
+              goal-conditioned learning</b>. 
+            </p>
+            <p>
+              Autonomous data collection can then build off of the Internet-scale knowledge stored in VLMs and diffusion models. 
+              VLMs can be used as <b>task proposers</b> to guide the policy towards 
+              semantically interesting goals, and can automate the <b>success detection</b> of autonomously collected 
+              trajectories. Diffusion models can be used to synthesize interesting and diverse image goals from the semantic goals generated by the VLM.
+              Both of these components help guide data collection towards interesting yet diverse tasks.
+            </p>
+          </div>
+          <div class="container is-max-desktop">
+            <img id="teaser" src="./static/images/system_diagram.png" alt="System Diagram" width="100%">
+           </div>
+           <div class="content has-text-justified">
+            <!-- <p>
+              We present SOAR, a general-purpose robot learning system capable of autonomously improving instruction 
+              following policies. SOAR first decouples a language conditioned policy into an <b>image-goal conditioned policy</b> 
+              and a <b>language conditioned image subgoal generator</b>. With such a formulation, any autonomously collected data
+              can be used for learning with an entirely self-supervised learning algorithm, namely <b>hindsight-relabeled 
+              goal conditioned learning</b>. Instruction following can then leverage the Internet-scale 
+              knowledge of semantics stored in <b>VLMs</b>. VLMs can be used as task proposers to bias the policy to learn to reach 
+              semantically interesting goals, and the same VLMs can automate the success detection of autonomously collected 
+              trajectories. The image-subgoal generator, also a VLM, can leverage its Internet pretraining to propose coherent, 
+              language-aligned goal images in unseen environments with unseen objects, the types of environments we most want 
+              policies to improve in.
+            </p> -->
+            <br>
+            <p>
+              Putting these components together, SOAR becomes an <b>end-to-end system for autonomous
+              improvement</b>. We deployed SOAR on a fleet of 5 WidowX robots, enabling the collection of over 
+              <a href="https://rail.eecs.berkeley.edu/datasets/soar_release/"><b>30,000 autonomous trajectories</b></a>
+              across more than 50 scenes within just a few weeks, 
+              and evaluated its ability to achieve a <b>2x improvement</b> in multiple language skills across 10 test scenes.
+            </p>
+          </div>
+        </div>
+      </div>
+  </section>
+
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code>@article{park2021nerfies,
+  author    = {Park, Keunhong and Sinha, Utkarsh and Barron, Jonathan T. and Bouaziz, Sofien and Goldman, Dan B and Seitz, Steven M. and Martin-Brualla, Ricardo},
+  title     = {Nerfies: Deformable Neural Radiance Fields},
+  journal   = {ICCV},
+  year      = {2021},
+}</code></pre>
+  </div>
+</section>
+
+
+<footer class="footer">
+  <div class="container">
+    <div class="content has-text-centered">
+      <a class="icon-link"
+         href="./static/videos/nerfies_paper.pdf">
+        <i class="fas fa-file-pdf"></i>
+      </a>
+      <a class="icon-link" href="https://github.com/keunhong" class="external-link" disabled>
+        <i class="fab fa-github"></i>
+      </a>
+    </div>
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            This website is licensed under a <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+          <p>
+            This means you are free to borrow the <a
+              href="https://github.com/nerfies/nerfies.github.io">source code</a> of this website,
+            we just ask that you link back to this page in the footer.
+            Please remember to remove the analytics code included in the header of the website which
+            you do not want on your website.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
