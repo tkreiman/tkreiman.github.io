@@ -222,7 +222,7 @@
               We first formalize three criteria for identifying distribution shifts based on the features, labels, and graph structures in chemical datasets. 
               This categorization provides a framework for understanding the types of distribution shifts an MLFF may encounter:
               <ol>
-                <li><b>Atomic Features</b>: Distribution shifts in atomic features are the most apparent and detrimental to the performance of current state-of-the-art models. This may involve encountering a molecule with a new element at test time that was not present during training.</li>
+                <li><b>Atomic Features</b>: Distribution shifts in atomic features refer to any change in the atomic composition of a chemical system. This includes, but is not limited to, cases where models are trained on systems containing mixtures of organic elements but tested on structures composed solely of carbon, or cases where there is a shift in system size between training and testing.</li>
                 <li><b>Force Norms</b>: An MLFF may also encounter a distribution shift in the force labels it predicts. A model trained on structures close to equilibrium, with low force magnitudes, might be tested on a structure with higher force norms.</li>
                 <li><b>Graph Structure / Connectivity</b>: Since many MLFFs are implemented as graph neural networks (GNNs), they may encounter distribution shifts in the graph structure of the test data. We refer to these as connectivity distribution shifts. We study these distribution shfits by analyzing the spectrum of the Laplacian for molecular graphs.</li>
               </ol>
@@ -291,7 +291,7 @@
       <p>
         We conduct experiments on chemical datasets to both identify the presence of distribution shifts and evaluate the effectiveness of our test-time refinement strategies to mitigate these shifts.
         We first explore the MACE-OFF model in more detail, investigating distribution shifts from the SPICE dataset to the SPICEv2 dataset.
-        We observe that despite its scale, MACE-OFF experiences force norm, connectivity, and element distribution shifts when evaluated on 10k new molecules from SPICEv2.
+        We observe that despite its scale, MACE-OFF experiences force norm, connectivity, and atomic feature distribution shifts when evaluated on 10k new molecules from SPICEv2.
         <b>Any deviation from the training distribution, shown in gray, predictably results in an increase in force error.</b>
       </p>
       <br>
@@ -359,7 +359,7 @@
               Our results reveal interesting insights into the current state of MLFFs which we summarize below:
               <ol>
                 <li>State-of-the-art MLFFs, even when trained on large datasets, suffer from <b>predictable</b> performance degradation due to distribution shifts</li>
-                <li>Common distribution shifts can be classified into element, force norm, and connectivity distribution shifts, and <b>we show how to diagnose them using spectral graph theory and cheap priors.</b></li>
+                <li>Common distribution shifts can be classified into atomic feature, force norm, and connectivity distribution shifts, and <b>we show how to diagnose them using spectral graph theory and cheap priors.</b></li>
                 <li><b>Test-time refinement methods represent initial steps in mitigating these distribution shifts</b>, showing promising results in modeling and simulating systems outside of the training distribution.</li>
                 <li>The success of these methods provides insights into how MLFFs overfit, suggesting that <b>while MLFFs are expressive enough to model diverse chemical spaces, they are not being effectively trained to do so.</b></li>
               </ol>
