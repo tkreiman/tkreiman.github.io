@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Transformers Adaptively Learn Molecular Structure Without Graph Priors">
+  <meta name="keywords" content="graph-free, force field, machine learning, pre-training, scaling laws">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transformers Adaptively Learn Molecular Structure Without Graph Priors</title>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=G-PYVRSFMDRL"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+
+    function gtag() {
+      dataLayer.push(arguments);
+    }
+
+    gtag('js', new Date());
+
+    gtag('config', 'G-PYVRSFMDRL');
+  </script> -->
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<nav class="navbar" role="navigation" aria-label="main navigation">
+  <div class="navbar-brand">
+    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+      <span aria-hidden="true"></span>
+    </a>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
+      <a class="navbar-item" href="https://tkreiman.github.io">
+      <span class="icon">
+          <i class="fas fa-home"></i>
+      </span>
+      </a>
+
+      <!-- <div class="navbar-item has-dropdown is-hoverable">
+        <a class="navbar-link">
+          More Research
+        </a>
+        <div class="navbar-dropdown">
+          <a class="navbar-item" href="https://hypernerf.github.io">
+            HyperNeRF
+          </a>
+          <a class="navbar-item" href="https://nerfies.github.io">
+            Nerfies
+          </a>
+          <a class="navbar-item" href="https://latentfusion.github.io">
+            LatentFusion
+          </a>
+          <a class="navbar-item" href="https://photoshape.github.io">
+            PhotoShape
+          </a>
+        </div>
+      </div> -->
+    </div>
+
+  </div>
+</nav>
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Transformers Adaptively Learn Molecular Structure Without Graph Priors</h1>
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <a href="https://tkreiman.github.io">Tobias Kreiman</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://yutongbai.com/">Yutong Bai</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.linkedin.com/in/fadi-atieh/">Fadi Atieh</a><sup>2</sup>,</span>
+            <span class="author-block">
+              <a href="https://elizabethweaver.me/index.html">Elizabeth Weaver</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://people.eecs.berkeley.edu/~ericqu/">Eric Qu</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://a1k12.github.io/">Aditi S. Krishnapriyan</a><sup>1</sup></span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block"><sup>1</sup>UC Berkeley</span>
+            <span class="author-block"><sup>2</sup>Independent Researcher</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <!-- PDF Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fas fa-file-pdf"></i>
+                  </span>
+                  <span>Paper Coming Soon</span>
+                </a>
+              </span>
+              <!-- <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="ai ai-arxiv"></i>
+                  </span>
+                  <span>arXiv</span>
+                </a>
+              </span> -->
+              <!-- Video Link.
+              <span class="link-block">
+                <a href="https://www.youtube.com/watch?v=MrKrnHhk8IA"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-youtube"></i>
+                  </span>
+                  <span>Video</span>
+                </a>
+              </span> -->
+              <!-- Code Link. -->
+              <span class="link-block">
+                <a href=""
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code coming soon</span>
+                  </a>
+              </span>
+              <!-- Dataset Link. -->
+              <!-- <span class="link-block">
+                <a href="https://github.com/google/nerfies/releases/tag/0.1"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="far fa-images"></i>
+                  </span>
+                  <span>Data</span>
+                  </a> -->
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- <section class="hero teaser">
+  <div class="container is-max-desktop">
+    <div class="hero-body">
+      <video id="teaser" autoplay muted loop playsinline height="100%">
+        <source src="./static/videos/teaser.mp4"
+                type="video/mp4">
+      </video>
+      <h2 class="subtitle has-text-centered">
+        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
+        free-viewpoint
+        portraits.
+      </h2>
+    </div>
+  </div>
+</section> -->
+
+<section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">Overview</h2>
+      <div class="columns">
+        <div class="column">
+          <div class="container is-max-desktop">
+            <img id="teaser" src="./images/teaser.png" alt="Teaser Diagram" width="100%">
+           </div>
+           <div class="content has-text-justified">
+            <br>
+            <p>
+            Graph Neural Networks (GNNs) are the dominant architecture for molecular machine learning, particularly for molecular property prediction and machine learning interatomic potentials (MLIPs). GNNs perform message passing on predefined graphs (e.g. from a radius cutoff), limiting their expressivity due to the fixed receptive field and slowing down inference with sparse graph operations. <b>We investigate whether a pure, unmodified Transformer trained directly on Cartesian coordinates—without predefined graphs or physical priors—can approximate molecular energies and forces.</b>  
+            <br>
+            <br>
+            As a starting point for our analysis, <b>we demonstrate how to train a graph-free Transformer to competitive energy and force mean absolute errors under a matched training compute budget</b>, relative to a state-of-the-art equivariant GNN on the OMol25 dataset. We discover that the <b>Transformer learns physically consistent patterns—such as attention weights that decay inversely with interatomic distance—and flexibly adapts them across different molecular environments</b> due to the absence of hard-coded biases. The use of a standard Transformer also unlocks <b>predictable improvements with respect to scaling training resources</b>, consistent with empirical scaling laws observed in other domains. Our results demonstrate that many favorable properties of GNNs can emerge adaptively in Transformers, challenging the necessity of hard-coded graph inductive biases and pointing toward standardized, scalable architectures for molecular modeling.
+            </p>
+          </div>
+        </div>
+      </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">What Can Graph-Free Transformers Learn?</h2>
+      <div class="columns">
+        <div class="column">
+
+          <h3 class="title is-4">Comparison to an Equivariant GNN on OMol25</h3>
+          <div class="container is-max-desktop">
+            <img id="teaser" src="./images/omol_table.png" alt="OMol25 Table" width="100%">
+           </div>
+
+           We train a 1B parameter Transformer on the OMol25 4M training split using the same total training compute budget (measured in FLOPs) as the equivariant eSEN model. Despite having no built-in geometric priors—and no graph—the Transformer achieves <b>competitive accuracy with eSEN on energies and forces</b>. It also <b>trains and runs faster in wall-clock time</b>, benefiting from mature software and hardware optimizations for Transformer architectures.
+          <br>
+          <br>
+          <h3 class="title is-4">Scaling Analysis</h3>
+           <div class="columns">
+            <div class="column is-six-sixteenths">
+              <img src="images/model_scaling_omol.png" alt="Model Scaling OMol25" style="width:100%">
+            </div>
+            <div class="column is-ten-sixteenths">
+              <img src="images/ft_flops.png" alt="FT FLOPS" style="width:100%">
+            </div>
+          </div>
+
+           <div class="content has-text-justified">
+            <br>
+            <p>
+              Transformers for molecular modeling <b>scale predictably with training resources</b> in both pre-training and fine-tuning. Pre-training scaling laws accurately predict the performance of models up to 1B parameters. Fine-tuning scaling laws give parabollic IsoFLOP curves, consistent with empirical scaling laws observed in other fields. Given that performance has not saturated at 1B parameters, and that scaling laws in other fields hold up to much larger model sizes, it is plausible that accuracy could continue to improve well into the hundreds of billions of parameters.
+            </p>
+          </div>
+
+          <h3 class="title is-4">Investigating the Learned Representations of the Transformer</h3>
+          <div class="columns">
+            <div class="column is-six-sixteenths">
+              <img src="images/attn_vs_dist_nine_layers.png" alt="Attn vs Dist Nine Layers" style="width:100%">
+            </div>
+            <div class="column is-ten-sixteenths">
+              <img src="images/attn_effective_rad_square.png" alt="Attn Effective Rad Square" style="width:90%">
+            </div>
+          </div>
+
+          We investigate the attention scores of the Transformer. it naturally learns physically consistent behaviors that are hard-coded in GNNs. For example, <b>in early layers attention scores drop off inversely with interatomic distance</b>, while in later layers attention scores remain roughly constant beyond ~12 Å. Interestingly, this distance-dependent attention drops off around the 6–12 Å range, coinciding with the radius
+          cutoffs commonly used in traditional graph-based MLIPs. This suggests that the Transformer learns to first extract local features and then perform global aggregation. Importantly, since the Transformer includes no explicit graph, we found that it exhibits <b>adaptive patterns—such as an effective radius cutoff that varies based on atomic environments—which would be hard to specify a priori in a traditional GNN.</b>
+
+        </div>
+      </div>
+  </section>
+
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">What does this mean for the future of molecular machine learning?</h2>
+      <br>
+      While some inductive biases may be beneficial for narrow problem settings, tackling new problems often requires designing new biases for each task. In contrast, general search and learning methods can discover inductive biases directly from data, and perhaps even discover more flexible solutions that are hard to anticipate a priori.
+      <br>
+      <br>
+      Our findings suggest that <b>Transformers can learn many of the graph-based inductive biases typically built into current ML models for chemistry—while doing so more flexibly.</b> We hope these findings point towards a standardized, widely applicable architecture for molecular modeling that draws on insights from the broader deep learning community.
+      <br>
+      <br>
+      For more details, check out <a href="" target="_blank">our paper!</a>
+      </div>
+    </div>
+  </section>
+
+  </section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code></code></pre>
+  </div> 
+</section>
+
+
+<footer class="footer">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>
+            under a 
+            <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
