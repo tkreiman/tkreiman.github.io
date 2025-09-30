@@ -5,7 +5,7 @@
   <meta name="description"
         content="Transformers Adaptively Learn Molecular Structure Without Graph Priors">
   <meta name="keywords" content="graph-free, force field, machine learning, pre-training, scaling laws">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Transformers Adaptively Learn Molecular Structure Without Graph Priors</title>
 
   <!-- Global site tag (gtag.js) - Google Analytics -->
@@ -226,7 +226,7 @@
        <div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 2px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
          <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
            <h4 style="margin: 0; color: #333; font-size: 20px;">Select Molecule:</h4>
-           <select id="molecule-selector" style="padding: 10px 15px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; cursor: pointer; transition: all 0.2s;">
+           <select id="molecule-selector" style="padding: 12px 18px; border: 2px solid #007bff; border-radius: 6px; font-size: 18px; background: white; cursor: pointer; transition: all 0.2s; min-height: 44px; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
              <option value="1">Molecule 1</option>
              <option value="2">Molecule 2</option>
              <option value="3">Molecule 3</option>
@@ -361,9 +361,8 @@
           stage.setSpin(true);           // start spinning
           stage.setSpin([0, 1, 0], 0.5);  // axis [x,y,z], speed in revolutions/sec
 
-          // Override default left-click behavior (which centers view) to recolor by attention
-          try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
-          stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
+          // Function to handle atom selection (used by both click and touch)
+          function handleAtomSelection(pickingProxy) {
             if (!pickingProxy || !pickingProxy.atom || !comp || !baseRep || !attnMatrix) {
               // Clicked on empty space - reset to element colors
               currentWeights = null;
@@ -400,7 +399,34 @@
               radiusScale: 0.175,
               bondScale: 0.8
             });
+          }
+
+          // Override default left-click behavior (which centers view) to recolor by attention
+          try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
+          stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
+            handleAtomSelection(pickingProxy);
           });
+
+          // Add touch support for mobile devices
+          stage.viewer.container.addEventListener('touchstart', function(event) {
+            // Prevent default touch behavior
+            event.preventDefault();
+          }, { passive: false });
+
+          stage.viewer.container.addEventListener('touchend', function(event) {
+            // Prevent default touch behavior
+            event.preventDefault();
+            
+            // Get touch coordinates
+            var touch = event.changedTouches[0];
+            var rect = stage.viewer.container.getBoundingClientRect();
+            var x = touch.clientX - rect.left;
+            var y = touch.clientY - rect.top;
+            
+            // Convert to NGL coordinates and pick atom
+            var pickingProxy = stage.viewer.pick(x, y);
+            handleAtomSelection(pickingProxy);
+          }, { passive: false });
           
           // Load attention matrix JSON
           fetch(attnFile)
