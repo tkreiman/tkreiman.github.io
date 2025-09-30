@@ -39,10 +39,10 @@ $(document).ready(function() {
     }
 
 		// Initialize all div with carousel class
-    var carousels = bulmaCarousel.attach('.carousel', options);
+    //var carousels = bulmaCarousel.attach('.carousel', options);
 
     // Loop on each carousel initialized
-    for(var i = 0; i < carousels.length; i++) {
+    /*for(var i = 0; i < carousels.length; i++) {
     	// Add listener to  event
     	carousels[i].on('before:show', state => {
     		console.log(state);
@@ -64,7 +64,7 @@ $(document).ready(function() {
         console.log(this.value, player.duration);
         player.currentTime = player.duration / 100 * this.value;
       })
-    }, false);*/
+    }, false);
     preloadInterpolationImages();
 
     $('#interpolation-slider').on('input', function(event) {
@@ -73,6 +73,6 @@ $(document).ready(function() {
     setInterpolationImage(0);
     $('#interpolation-slider').prop('max', NUM_INTERP_FRAMES - 1);
 
-    bulmaSlider.attach();
+    bulmaSlider.attach(); */
 
 })

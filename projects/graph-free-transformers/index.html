@@ -26,19 +26,26 @@
         rel="stylesheet">
 
   <link rel="stylesheet" href="./static/css/bulma.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
-  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
-  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <!--<link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">-->
+  <!--<link rel="stylesheet" href="./static/css/fontawesome.all.min.css">-->
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
   <link rel="stylesheet" href="./static/css/index.css">
   <link rel="icon" href="./static/images/favicon.svg">
+  
+  <style>
+    body {
+      font-size: 1.5rem; /* Increase base font size by 20% */
+    }
+  </style>
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
-  <script src="./static/js/bulma-carousel.min.js"></script>
-  <script src="./static/js/bulma-slider.min.js"></script>
+  <!-- <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>-->
   <script src="./static/js/index.js"></script>
+  <script src="./static/js/ngl.js"></script>
 </head>
 <body>
 
@@ -95,7 +102,7 @@
             <span class="author-block">
               <a href="https://yutongbai.com/">Yutong Bai</a><sup>1</sup>,</span>
             <span class="author-block">
-              <a href="https://www.linkedin.com/in/fadi-atieh/">Fadi Atieh</a><sup>2</sup>,</span>
+              <a href="https://www.linkedin.com/in/fadi-atieh/">Fadi Atieh</a><sup>1</sup>,</span>
             <span class="author-block">
               <a href="https://elizabethweaver.me/index.html">Elizabeth Weaver</a><sup>1</sup>,</span>
             <span class="author-block">
@@ -106,7 +113,6 @@
 
           <div class="is-size-5 publication-authors">
             <span class="author-block"><sup>1</sup>UC Berkeley</span>
-            <span class="author-block"><sup>2</sup>Independent Researcher</span>
           </div>
 
           <div class="column has-text-centered">
@@ -204,6 +210,400 @@
         </div>
       </div>
   </section>
+
+
+  <section class="section">
+    <div class="container is-max-desktop">
+
+      <h2 class="title is-3">What Intermolecular Structure Do Graph-Free Transformers Discover?</h2>
+      <br>
+      <p>
+         We visualize the attention scores from the 4th layer of our Transformer for 3 molecules from the OMol25 validation dataset. <span style="font-weight:bold">Click on an atom</span> to see the learned attention scores for that atom. Red is <span style="color:red; font-weight:bold">more attention</span>,
+         blue is <span style="color:blue; font-weight:bold">less attention</span>.
+      </p>
+       
+       <!-- Interactive Molecule Viewer -->
+       <div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 2px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+           <h4 style="margin: 0; color: #333; font-size: 20px;">Select Molecule:</h4>
+           <select id="molecule-selector" style="padding: 10px 15px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; cursor: pointer; transition: all 0.2s;">
+             <option value="1">Molecule 1</option>
+             <option value="2">Molecule 2</option>
+             <option value="3">Molecule 3</option>
+           </select>
+         </div>
+         <div style="border-top: 1px solid #dee2e6; padding-top: 15px;">
+           <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Chemical Formula: <span id="chemical-formula" style="font-weight: bold; color: #007bff;">Loading...</span></h4>
+           <div id="atom-legend" style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px;">
+             <!-- Legend will be populated by JavaScript -->
+           </div>
+         </div>
+         <div style="border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
+           <div style="background:#eaeaea; border-radius:12px; padding:12px;">
+             <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Click Atoms to See Learned Attention Scores:</h4>  
+             <div id="viewport" style="width:100%; height:400px;"></div>
+
+           </div>
+         </div>
+       </div>
+       <p>The Transformer naturally <b>learns attention patterns that are inversely proportional to interatomic distance.</b></p>
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      var stage = new NGL.Stage("viewport", { backgroundColor: "white" });
+      var comp = null;
+      var baseRep = null;      // single representation with attention-based colors
+      var attnMatrix = null;   // 2D array [N x N]
+      var currentWeights = null; // 1D array length N
+      var autoRotate = true;   // enable automatic rotation
+      var isUserInteracting = false; // track if user is interacting
+      var currentMolecule = "1"; // current selected molecule
+
+      // Red -> Blue color scheme by attention (red=low, blue=high)
+      var schemeId = NGL.ColormakerRegistry.addScheme(function () {
+        this.atomColor = function (atom) {
+          if (!currentWeights || !atom || atom.index >= currentWeights.length) return 0x808080;
+          var v = currentWeights[atom.index] || 0.0; // assume already normalized [0,1]
+          // v=0 => red (255,0,0), v=1 => blue (0,0,255)
+          var r = Math.round(255 * (1 - v));
+          var g = 0;
+          var b = Math.round(255 * v);
+          return (r << 16) | (g << 8) | b;
+        };
+      });
+
+      function clearHeatmap() { /* single rep, nothing to clear */ }
+
+      // Function to load a specific molecule
+      function loadMolecule(moleculeNum) {
+        currentMolecule = moleculeNum;
+        var pdbFile = "./atoms_" + moleculeNum + ".pdb";
+        var attnFile = "./attn_matrix_" + moleculeNum + ".json";
+        
+        // Clear existing structure
+        if (comp) {
+          stage.removeComponent(comp);
+        }
+        
+        // Load new structure
+        stage.loadFile(pdbFile, { defaultRepresentation: false }).then(function (c) {
+          comp = c;
+          
+          // Calculate chemical formula and create atom legend
+          var atomCounts = {};
+          for (var i = 0; i < comp.structure.atomCount; i++) {
+            var atom = comp.structure.getAtomProxy(i);
+            var element = atom.element;
+            atomCounts[element] = (atomCounts[element] || 0) + 1;
+          }
+          
+          // Generate properly formatted chemical formula with subscripts
+          var elements = Object.keys(atomCounts).sort();
+          var formulaHTML = '';
+          for (var j = 0; j < elements.length; j++) {
+            var elem = elements[j];
+            var count = atomCounts[elem];
+            // Ensure proper capitalization: first letter uppercase, rest lowercase
+            var properElement = elem.charAt(0).toUpperCase() + elem.slice(1).toLowerCase();
+            formulaHTML += properElement;
+            if (count > 1) formulaHTML += '<sub>' + count + '</sub>';
+          }
+          document.getElementById('chemical-formula').innerHTML = formulaHTML;
+          
+          // Create atom legend
+          var legendDiv = document.getElementById('atom-legend');
+          legendDiv.innerHTML = ''; // Clear existing legend
+          for (var k = 0; k < elements.length; k++) {
+            var element = elements[k];
+            var count = atomCounts[element];
+            
+            var legendItem = document.createElement('div');
+            legendItem.style.cssText = 'display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: white; border-radius: 4px; border: 1px solid #ddd;';
+            
+            var colorBox = document.createElement('div');
+            // Use standard element colors
+            var elementColors = {
+              'H': '#FFFFFF', 'C': '#909090', 'N': '#3050F8', 'O': '#FF0D0D',
+              'F': '#90E050', 'P': '#FF8000', 'S': '#FFFF30', 'Cl': '#1FF01F',
+              'Br': '#A62929', 'I': '#940094', 'He': '#D9FFFF', 'Li': '#CC80FF',
+              'Be': '#C2FF00', 'B': '#FFB5B5', 'Ne': '#B3E3F5', 'Na': '#AB5CF2', 'Mg': '#8AFF00',
+              'Al': '#BFA6A6', 'Si': '#F0C8A0', 'Ar': '#80D1E3', 'K': '#8F40D4',
+              'Ca': '#3DFF00', 'Ti': '#BFC2C7', 'Cr': '#8A99C7', 'Mn': '#9C7AC7',
+              'Fe': '#E06633', 'Co': '#F090A0', 'Ni': '#50D050', 'Cu': '#C88033',
+            'Zn': '#7D80B0', 'Ga': '#C28F8F', 'Ge': '#668F8F', 'As': '#BD80E3',
+            'Se': '#FFA100', 'Kr': '#5CB8D1', 'Rb': '#702EB0', 'Sr': '#00FF00',
+            'Y': '#94FFFF', 'Zr': '#94E0E0', 'Nb': '#73C2C9', 'Mo': '#54B5B5'
+          };
+          // Use proper capitalization for color lookup
+            var properElement = element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
+            var color = elementColors[properElement] || '#808080';
+            colorBox.style.cssText = 'width: 16px; height: 16px; border-radius: 50%; background-color: ' + color + '; border: 1px solid #333;';
+            
+            var label = document.createElement('span');
+            label.textContent = properElement + (count > 1 ? ' (' + count + ')' : '');
+            label.style.fontWeight = 'bold';
+            
+            legendItem.appendChild(colorBox);
+            legendItem.appendChild(label);
+            legendDiv.appendChild(legendItem);
+          }
+          
+          // Create single ball+stick representation
+          baseRep = comp.addRepresentation("ball+stick", {
+            color: "element",
+            opacity: 0.9,
+            radiusType: "vdw",
+            radiusScale: 0.175,
+            bondScale: 0.8
+          });
+          stage.autoView();
+
+          // Enable automatic rotation using NGL's built-in feature
+          stage.setSpin(true);           // start spinning
+          stage.setSpin([0, 1, 0], 0.5);  // axis [x,y,z], speed in revolutions/sec
+
+          // Override default left-click behavior (which centers view) to recolor by attention
+          try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
+          stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
+            if (!pickingProxy || !pickingProxy.atom || !comp || !baseRep || !attnMatrix) {
+              // Clicked on empty space - reset to element colors
+              currentWeights = null;
+              comp.removeAllRepresentations();
+              baseRep = comp.addRepresentation("ball+stick", {
+                color: "element",
+                opacity: 0.9,
+                radiusType: "vdw",
+                radiusScale: 0.175,
+                bondScale: 0.8
+              });
+              return;
+            }
+            
+            var colIdx = pickingProxy.atom.index;
+            var n = attnMatrix.length;
+            if (colIdx < 0 || colIdx >= n) return;
+            
+            // Build column vector from attention matrix
+            var vec = new Array(n);
+            for (var j = 0; j < n; j++) {
+              var row = attnMatrix[j];
+              if (!Array.isArray(row) || row.length !== n) return;
+              vec[j] = Number(row[colIdx]) || 0.0;
+            }
+            currentWeights = vec;
+            
+            // Clear all representations first to avoid overlapping
+            comp.removeAllRepresentations();
+            baseRep = comp.addRepresentation("ball+stick", {
+              color: schemeId,
+              opacity: 0.9,
+              radiusType: "vdw",
+              radiusScale: 0.175,
+              bondScale: 0.8
+            });
+          });
+          
+          // Load attention matrix JSON
+          fetch(attnFile)
+            .then(function (r) { if (!r.ok) throw new Error("Failed to load " + attnFile); return r.json(); })
+            .then(function (mat) {
+              if (!Array.isArray(mat) || mat.length === 0 || !Array.isArray(mat[0])) return;
+              attnMatrix = mat;
+            })
+            .catch(function (err) { console.error(err); });
+        });
+      }
+
+      // Add dropdown event listener
+      document.getElementById('molecule-selector').addEventListener('change', function() {
+        loadMolecule(this.value);
+      });
+
+      // Load initial molecule
+      loadMolecule("1");
+    });
+  </script>
+</div>
+</section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">What Can Graph-Free Transformers Learn?</h2>
+      <div class="columns">
+        <div class="column">
+
+          <h3 class="title is-4">Comparison to an Equivariant GNN on OMol25</h3>
+          <div class="container is-max-desktop">
+            <img id="teaser" src="./images/omol_table.png" alt="OMol25 Table" width="100%">
+           </div>
+
+          <h3 class="title is-4">Scaling Laws</h3>
+          <div class="columns">
+            <div class="column is-six-sixteenths">
+              <img src="images/model_scaling_omol.png" alt="Model Scaling OMol25" style="width:100%">
+            </div>
+            <div class="column is-ten-sixteenths">
+              <img src="images/ft_flops.png" alt="FT FLOPS" style="width:100%">
+            </div>
+          </div>
+
+          <h3 class="title is-4">Attention Patterns</h3>
+          <div class="columns">
+            <div class="column is-six-sixteenths">
+              <img src="images/attn_vs_dist_nine_layers.png" alt="Attn vs Dist Nine Layers" style="width:100%">
+            </div>
+            <div class="column is-ten-sixteenths">
+              <img src="images/attn_effective_rad_square.png" alt="Attn Effective Rad Square" style="width:90%">
+            </div>
+          </div>
+
+        </div>
+      </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">What does this mean for the future of molecular machine learning?</h2>
+      <div class="content has-text-justified">
+        <p>
+          Our findings suggest that <b>Transformers can learn many of the graph-based inductive biases typically built into current ML models for chemistry—while doing so more flexibly.</b> We hope these findings point towards a standardized, widely applicable architecture for molecular modeling that draws on insights from the broader deep learning community.
+          <br>
+          <br>
+          For more details, check out <a href="" target="_blank">our paper!</a>
+        </p>
+      </div>
+    </div>
+  </section>
+
+  </section>
+
+<section class="section" id="BibTeX">
+  <div class="container is-max-desktop content">
+    <h2 class="title">BibTeX</h2>
+    <pre><code></code></pre>
+  </div> 
+</section>
+
+
+<footer class="footer">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content">
+          <p>
+            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>
+            under a 
+            <a rel="license"
+                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
+            Commons Attribution-ShareAlike 4.0 International License</a>.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
+          legendItem.style.cssText = 'display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: white; border-radius: 4px; border: 1px solid #ddd;';
+          
+          var colorBox = document.createElement('div');
+          // Use standard element colors
+          var elementColors = {
+            'H': '#FFFFFF', 'C': '#909090', 'N': '#3050F8', 'O': '#FF0D0D',
+            'F': '#90E050', 'P': '#FF8000', 'S': '#FFFF30', 'Cl': '#1FF01F',
+            'Br': '#A62929', 'I': '#940094', 'He': '#D9FFFF', 'Li': '#CC80FF',
+            'Be': '#C2FF00', 'B': '#FFB5B5', 'Ne': '#B3E3F5', 'Na': '#AB5CF2', 'Mg': '#8AFF00',
+            'Al': '#BFA6A6', 'Si': '#F0C8A0', 'Ar': '#80D1E3', 'K': '#8F40D4',
+            'Ca': '#3DFF00', 'Ti': '#BFC2C7', 'Cr': '#8A99C7', 'Mn': '#9C7AC7',
+            'Fe': '#E06633', 'Co': '#F090A0', 'Ni': '#50D050', 'Cu': '#C88033',
+            'Zn': '#7D80B0', 'Ga': '#C28F8F', 'Ge': '#668F8F', 'As': '#BD80E3',
+            'Se': '#FFA100', 'Kr': '#5CB8D1', 'Rb': '#702EB0', 'Sr': '#00FF00',
+            'Y': '#94FFFF', 'Zr': '#94E0E0', 'Nb': '#73C2C9', 'Mo': '#54B5B5'
+          };
+          // Use proper capitalization for color lookup
+          var properElement = element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
+          var color = elementColors[properElement] || '#808080';
+          colorBox.style.cssText = 'width: 16px; height: 16px; border-radius: 50%; background-color: ' + color + '; border: 1px solid #333;';
+          
+          var label = document.createElement('span');
+          label.textContent = properElement + (count > 1 ? ' (' + count + ')' : '');
+          label.style.fontWeight = 'bold';
+          
+          legendItem.appendChild(colorBox);
+          legendItem.appendChild(label);
+          legendDiv.appendChild(legendItem);
+        }
+        
+        // Create single ball+stick representation
+        baseRep = comp.addRepresentation("ball+stick", {
+          color: "element",
+          opacity: 0.9,
+          radiusType: "vdw",
+          radiusScale: 0.175,
+          bondScale: 0.8
+        });
+        stage.autoView();
+
+        // Enable automatic rotation using NGL's built-in feature
+        stage.setSpin(true);           // start spinning
+        stage.setSpin([0, 1, 0], 0.5);  // axis [x,y,z], speed in revolutions/sec
+
+        // Override default left-click behavior (which centers view) to recolor by attention
+        try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
+        stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
+          if (!pickingProxy || !pickingProxy.atom || !comp || !baseRep || !attnMatrix) {
+            // Clicked on empty space - reset to element colors
+            currentWeights = null;
+            comp.removeAllRepresentations();
+            baseRep = comp.addRepresentation("ball+stick", {
+              color: "element",
+              opacity: 0.9,
+              radiusType: "vdw",
+              radiusScale: 0.175,
+              bondScale: 0.8
+            });
+            return;
+          }
+          
+          var colIdx = pickingProxy.atom.index;
+          var n = attnMatrix.length;
+          if (colIdx < 0 || colIdx >= n) return;
+          
+          // Build column vector from attention matrix
+          var vec = new Array(n);
+          for (var j = 0; j < n; j++) {
+            var row = attnMatrix[j];
+            if (!Array.isArray(row) || row.length !== n) return;
+            vec[j] = Number(row[colIdx]) || 0.0;
+          }
+          currentWeights = vec;
+          
+          // Clear all representations first to avoid overlapping
+          comp.removeAllRepresentations();
+          baseRep = comp.addRepresentation("ball+stick", {
+            color: schemeId,
+            opacity: 0.9,
+            radiusType: "vdw",
+            radiusScale: 0.175,
+            bondScale: 0.8
+          });
+        });
+        // Load attention matrix JSON
+        fetch("./attn_matrix.json")
+          .then(function (r) { if (!r.ok) throw new Error("Failed to load attn_matrix.json"); return r.json(); })
+          .then(function (mat) {
+            if (!Array.isArray(mat) || mat.length === 0 || !Array.isArray(mat[0])) return;
+            attnMatrix = mat;
+          })
+          .catch(function (err) { console.error(err); });
+      });
+    });
+  </script>
+  <div style="background:#eaeaea; border-radius:12px; padding:12px;">
+    <div id="viewport" style="width:100%; height:400px;"></div>
+  </div>
+</div>
+</section>
 
   <section class="section">
     <div class="container is-max-desktop">
