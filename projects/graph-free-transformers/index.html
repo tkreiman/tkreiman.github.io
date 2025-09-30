@@ -240,7 +240,7 @@
          </div>
          <div style="border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
            <div style="background:#eaeaea; border-radius:12px; padding:12px;">
-             <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Click Atoms to See Learned Attention Scores:</h4>  
+             <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Click Atoms to See Learned Attention Scores (Desktop Only):</h4>  
              <div id="viewport" style="width:100%; height:400px;"></div>
 
            </div>
@@ -363,7 +363,9 @@
 
           // Function to handle atom selection (used by both click and touch)
           function handleAtomSelection(pickingProxy) {
+            console.log("handleAtomSelection called", pickingProxy);
             if (!pickingProxy || !pickingProxy.atom || !comp || !baseRep || !attnMatrix) {
+              console.log("Empty space clicked - resetting colors");
               // Clicked on empty space - reset to element colors
               currentWeights = null;
               comp.removeAllRepresentations();
@@ -378,6 +380,7 @@
             }
             
             var colIdx = pickingProxy.atom.index;
+            console.log("Atom clicked - index:", colIdx, "element:", pickingProxy.atom.element);
             var n = attnMatrix.length;
             if (colIdx < 0 || colIdx >= n) return;
             
@@ -389,6 +392,7 @@
               vec[j] = Number(row[colIdx]) || 0.0;
             }
             currentWeights = vec;
+            console.log("Updated attention weights for atom", colIdx);
             
             // Clear all representations first to avoid overlapping
             comp.removeAllRepresentations();
@@ -404,29 +408,16 @@
           // Override default left-click behavior (which centers view) to recolor by attention
           try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
           stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
+            console.log("Mouse click detected");
             handleAtomSelection(pickingProxy);
           });
 
-          // Add touch support for mobile devices
-          stage.viewer.container.addEventListener('touchstart', function(event) {
-            // Prevent default touch behavior
-            event.preventDefault();
-          }, { passive: false });
-
-          stage.viewer.container.addEventListener('touchend', function(event) {
-            // Prevent default touch behavior
-            event.preventDefault();
-            
-            // Get touch coordinates
-            var touch = event.changedTouches[0];
-            var rect = stage.viewer.container.getBoundingClientRect();
-            var x = touch.clientX - rect.left;
-            var y = touch.clientY - rect.top;
-            
-            // Convert to NGL coordinates and pick atom
-            var pickingProxy = stage.viewer.pick(x, y);
+          // Add touch support using the same approach as mouse clicks
+          try { stage.mouseControls.remove("touchPick"); } catch (e) {}
+          stage.mouseControls.add("touchPick", function (stg, pickingProxy) {
+            console.log("Touch pick detected");
             handleAtomSelection(pickingProxy);
-          }, { passive: false });
+          });
           
           // Load attention matrix JSON
           fetch(attnFile)
@@ -463,7 +454,7 @@
            </div>
 
           <h3 class="title is-4">Scaling Laws</h3>
-          <div class="columns">
+           <div class="columns">
             <div class="column is-six-sixteenths">
               <img src="images/model_scaling_omol.png" alt="Model Scaling OMol25" style="width:100%">
             </div>
@@ -491,10 +482,10 @@
       <h2 class="title is-3">What does this mean for the future of molecular machine learning?</h2>
       <div class="content has-text-justified">
         <p>
-          Our findings suggest that <b>Transformers can learn many of the graph-based inductive biases typically built into current ML models for chemistry—while doing so more flexibly.</b> We hope these findings point towards a standardized, widely applicable architecture for molecular modeling that draws on insights from the broader deep learning community.
-          <br>
-          <br>
-          For more details, check out <a href="" target="_blank">our paper!</a>
+      Our findings suggest that <b>Transformers can learn many of the graph-based inductive biases typically built into current ML models for chemistry—while doing so more flexibly.</b> We hope these findings point towards a standardized, widely applicable architecture for molecular modeling that draws on insights from the broader deep learning community.
+      <br>
+      <br>
+      For more details, check out <a href="" target="_blank">our paper!</a>
         </p>
       </div>
     </div>
@@ -530,198 +521,4 @@
 
 </body>
 </html>
-          legendItem.style.cssText = 'display: flex; align-items: center; gap: 5px; padding: 5px 10px; background: white; border-radius: 4px; border: 1px solid #ddd;';
           
-          var colorBox = document.createElement('div');
-          // Use standard element colors
-          var elementColors = {
-            'H': '#FFFFFF', 'C': '#909090', 'N': '#3050F8', 'O': '#FF0D0D',
-            'F': '#90E050', 'P': '#FF8000', 'S': '#FFFF30', 'Cl': '#1FF01F',
-            'Br': '#A62929', 'I': '#940094', 'He': '#D9FFFF', 'Li': '#CC80FF',
-            'Be': '#C2FF00', 'B': '#FFB5B5', 'Ne': '#B3E3F5', 'Na': '#AB5CF2', 'Mg': '#8AFF00',
-            'Al': '#BFA6A6', 'Si': '#F0C8A0', 'Ar': '#80D1E3', 'K': '#8F40D4',
-            'Ca': '#3DFF00', 'Ti': '#BFC2C7', 'Cr': '#8A99C7', 'Mn': '#9C7AC7',
-            'Fe': '#E06633', 'Co': '#F090A0', 'Ni': '#50D050', 'Cu': '#C88033',
-            'Zn': '#7D80B0', 'Ga': '#C28F8F', 'Ge': '#668F8F', 'As': '#BD80E3',
-            'Se': '#FFA100', 'Kr': '#5CB8D1', 'Rb': '#702EB0', 'Sr': '#00FF00',
-            'Y': '#94FFFF', 'Zr': '#94E0E0', 'Nb': '#73C2C9', 'Mo': '#54B5B5'
-          };
-          // Use proper capitalization for color lookup
-          var properElement = element.charAt(0).toUpperCase() + element.slice(1).toLowerCase();
-          var color = elementColors[properElement] || '#808080';
-          colorBox.style.cssText = 'width: 16px; height: 16px; border-radius: 50%; background-color: ' + color + '; border: 1px solid #333;';
-          
-          var label = document.createElement('span');
-          label.textContent = properElement + (count > 1 ? ' (' + count + ')' : '');
-          label.style.fontWeight = 'bold';
-          
-          legendItem.appendChild(colorBox);
-          legendItem.appendChild(label);
-          legendDiv.appendChild(legendItem);
-        }
-        
-        // Create single ball+stick representation
-        baseRep = comp.addRepresentation("ball+stick", {
-          color: "element",
-          opacity: 0.9,
-          radiusType: "vdw",
-          radiusScale: 0.175,
-          bondScale: 0.8
-        });
-        stage.autoView();
-
-        // Enable automatic rotation using NGL's built-in feature
-        stage.setSpin(true);           // start spinning
-        stage.setSpin([0, 1, 0], 0.5);  // axis [x,y,z], speed in revolutions/sec
-
-        // Override default left-click behavior (which centers view) to recolor by attention
-        try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
-        stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
-          if (!pickingProxy || !pickingProxy.atom || !comp || !baseRep || !attnMatrix) {
-            // Clicked on empty space - reset to element colors
-            currentWeights = null;
-            comp.removeAllRepresentations();
-            baseRep = comp.addRepresentation("ball+stick", {
-              color: "element",
-              opacity: 0.9,
-              radiusType: "vdw",
-              radiusScale: 0.175,
-              bondScale: 0.8
-            });
-            return;
-          }
-          
-          var colIdx = pickingProxy.atom.index;
-          var n = attnMatrix.length;
-          if (colIdx < 0 || colIdx >= n) return;
-          
-          // Build column vector from attention matrix
-          var vec = new Array(n);
-          for (var j = 0; j < n; j++) {
-            var row = attnMatrix[j];
-            if (!Array.isArray(row) || row.length !== n) return;
-            vec[j] = Number(row[colIdx]) || 0.0;
-          }
-          currentWeights = vec;
-          
-          // Clear all representations first to avoid overlapping
-          comp.removeAllRepresentations();
-          baseRep = comp.addRepresentation("ball+stick", {
-            color: schemeId,
-            opacity: 0.9,
-            radiusType: "vdw",
-            radiusScale: 0.175,
-            bondScale: 0.8
-          });
-        });
-        // Load attention matrix JSON
-        fetch("./attn_matrix.json")
-          .then(function (r) { if (!r.ok) throw new Error("Failed to load attn_matrix.json"); return r.json(); })
-          .then(function (mat) {
-            if (!Array.isArray(mat) || mat.length === 0 || !Array.isArray(mat[0])) return;
-            attnMatrix = mat;
-          })
-          .catch(function (err) { console.error(err); });
-      });
-    });
-  </script>
-  <div style="background:#eaeaea; border-radius:12px; padding:12px;">
-    <div id="viewport" style="width:100%; height:400px;"></div>
-  </div>
-</div>
-</section>
-
-  <section class="section">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">What Can Graph-Free Transformers Learn?</h2>
-      <div class="columns">
-        <div class="column">
-
-          <h3 class="title is-4">Comparison to an Equivariant GNN on OMol25</h3>
-          <div class="container is-max-desktop">
-            <img id="teaser" src="./images/omol_table.png" alt="OMol25 Table" width="100%">
-           </div>
-
-           We train a 1B parameter Transformer on the OMol25 4M training split using the same total training compute budget (measured in FLOPs) as the equivariant eSEN model. Despite having no built-in geometric priors—and no graph—the Transformer achieves <b>competitive accuracy with eSEN on energies and forces</b>. It also <b>trains and runs faster in wall-clock time</b>, benefiting from mature software and hardware optimizations for Transformer architectures.
-          <br>
-          <br>
-          <h3 class="title is-4">Scaling Analysis</h3>
-           <div class="columns">
-            <div class="column is-six-sixteenths">
-              <img src="images/model_scaling_omol.png" alt="Model Scaling OMol25" style="width:100%">
-            </div>
-            <div class="column is-ten-sixteenths">
-              <img src="images/ft_flops.png" alt="FT FLOPS" style="width:100%">
-            </div>
-          </div>
-
-           <div class="content has-text-justified">
-            <br>
-            <p>
-              Transformers for molecular modeling <b>scale predictably with training resources</b> in both pre-training and fine-tuning. Pre-training scaling laws accurately predict the performance of models up to 1B parameters. Fine-tuning scaling laws give parabollic IsoFLOP curves, consistent with empirical scaling laws observed in other fields. Given that performance has not saturated at 1B parameters, and that scaling laws in other fields hold up to much larger model sizes, it is plausible that accuracy could continue to improve well into the hundreds of billions of parameters.
-            </p>
-          </div>
-
-          <h3 class="title is-4">Investigating the Learned Representations of the Transformer</h3>
-          <div class="columns">
-            <div class="column is-six-sixteenths">
-              <img src="images/attn_vs_dist_nine_layers.png" alt="Attn vs Dist Nine Layers" style="width:100%">
-            </div>
-            <div class="column is-ten-sixteenths">
-              <img src="images/attn_effective_rad_square.png" alt="Attn Effective Rad Square" style="width:90%">
-            </div>
-          </div>
-
-          We investigate the attention scores of the Transformer. it naturally learns physically consistent behaviors that are hard-coded in GNNs. For example, <b>in early layers attention scores drop off inversely with interatomic distance</b>, while in later layers attention scores remain roughly constant beyond ~12 Å. Interestingly, this distance-dependent attention drops off around the 6–12 Å range, coinciding with the radius
-          cutoffs commonly used in traditional graph-based MLIPs. This suggests that the Transformer learns to first extract local features and then perform global aggregation. Importantly, since the Transformer includes no explicit graph, we found that it exhibits <b>adaptive patterns—such as an effective radius cutoff that varies based on atomic environments—which would be hard to specify a priori in a traditional GNN.</b>
-
-        </div>
-      </div>
-  </section>
-
-
-  <section class="section">
-    <div class="container is-max-desktop">
-      <h2 class="title is-3">What does this mean for the future of molecular machine learning?</h2>
-      <br>
-      While some inductive biases may be beneficial for narrow problem settings, tackling new problems often requires designing new biases for each task. In contrast, general search and learning methods can discover inductive biases directly from data, and perhaps even discover more flexible solutions that are hard to anticipate a priori.
-      <br>
-      <br>
-      Our findings suggest that <b>Transformers can learn many of the graph-based inductive biases typically built into current ML models for chemistry—while doing so more flexibly.</b> We hope these findings point towards a standardized, widely applicable architecture for molecular modeling that draws on insights from the broader deep learning community.
-      <br>
-      <br>
-      For more details, check out <a href="" target="_blank">our paper!</a>
-      </div>
-    </div>
-  </section>
-
-  </section>
-
-<section class="section" id="BibTeX">
-  <div class="container is-max-desktop content">
-    <h2 class="title">BibTeX</h2>
-    <pre><code></code></pre>
-  </div> 
-</section>
-
-
-<footer class="footer">
-  <div class="container is-max-desktop">
-    <div class="columns is-centered">
-      <div class="column is-8">
-        <div class="content">
-          <p>
-            Website template borrowed from <a href="https://github.com/nerfies/nerfies.github.io">NeRFies</a>
-            under a 
-            <a rel="license"
-                                                href="http://creativecommons.org/licenses/by-sa/4.0/">Creative
-            Commons Attribution-ShareAlike 4.0 International License</a>.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-</footer>
-
-</body>
-</html>
