@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="description"
-        content="Transformers Adaptively Learn Molecular Structure Without Graph Priors">
+        content="Transformers Discover Interatomic Structure Without Graph Priors">
   <meta name="keywords" content="graph-free, force field, machine learning, pre-training, scaling laws">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
   <title>Transformers Adaptively Learn Molecular Structure Without Graph Priors</title>
@@ -64,26 +64,6 @@
           <i class="fas fa-home"></i>
       </span>
       </a>
-
-      <!-- <div class="navbar-item has-dropdown is-hoverable">
-        <a class="navbar-link">
-          More Research
-        </a>
-        <div class="navbar-dropdown">
-          <a class="navbar-item" href="https://hypernerf.github.io">
-            HyperNeRF
-          </a>
-          <a class="navbar-item" href="https://nerfies.github.io">
-            Nerfies
-          </a>
-          <a class="navbar-item" href="https://latentfusion.github.io">
-            LatentFusion
-          </a>
-          <a class="navbar-item" href="https://photoshape.github.io">
-            PhotoShape
-          </a>
-        </div>
-      </div> -->
     </div>
 
   </div>
@@ -174,38 +154,22 @@
   </div>
 </section>
 
-<!-- <section class="hero teaser">
-  <div class="container is-max-desktop">
-    <div class="hero-body">
-      <video id="teaser" autoplay muted loop playsinline height="100%">
-        <source src="./static/videos/teaser.mp4"
-                type="video/mp4">
-      </video>
-      <h2 class="subtitle has-text-centered">
-        <span class="dnerf">Nerfies</span> turns selfie videos from your phone into
-        free-viewpoint
-        portraits.
-      </h2>
-    </div>
-  </div>
-</section> -->
 
 <section class="section">
     <div class="container is-max-desktop">
       <h2 class="title is-3">Overview</h2>
       <div class="columns">
         <div class="column">
-          <div class="container is-max-desktop">
-            <img id="teaser" src="./images/teaser.png" alt="Teaser Diagram" width="100%">
-           </div>
            <div class="content has-text-justified">
             <br>
-            <p>
-            Graph Neural Networks (GNNs) are the dominant architecture for molecular machine learning, particularly for molecular property prediction and machine learning interatomic potentials (MLIPs). GNNs perform message passing on predefined graphs (e.g. from a radius cutoff), limiting their expressivity due to the fixed receptive field and slowing down inference with sparse graph operations. <b>We investigate whether a pure, unmodified Transformer trained directly on Cartesian coordinates—without predefined graphs or physical priors—can approximate molecular energies and forces.</b>  
+            
+            <b>Problem:</b> Graph Neural Networks (GNNs) are the dominant architecture for molecular machine learning (ML) but depend on <b>predefined graphs</b>, which limit expressivity and slow inference.
             <br>
             <br>
-            As a starting point for our analysis, <b>we demonstrate how to train a graph-free Transformer to competitive energy and force mean absolute errors under a matched training compute budget</b>, relative to a state-of-the-art equivariant GNN on the OMol25 dataset. We discover that the <b>Transformer learns physically consistent patterns—such as attention weights that decay inversely with interatomic distance—and flexibly adapts them across different molecular environments</b> due to the absence of hard-coded biases. The use of a standard Transformer also unlocks <b>predictable improvements with respect to scaling training resources</b>, consistent with empirical scaling laws observed in other domains. Our results demonstrate that many favorable properties of GNNs can emerge adaptively in Transformers, challenging the necessity of hard-coded graph inductive biases and pointing toward standardized, scalable architectures for molecular modeling.
-            </p>
+            <b>Investigation:</b> We test if a model trained directly on Cartesian coordinates—<b>without predefined graphs or physical priors</b>—can learn molecular energies and forces, gaining the flexibility to discover interactions from data and opening the door to leverage scaling laws and architectures from broader deep learning.
+            <br>
+            <br>
+            <b>Approach:</b> We demonstrate that a graph-free Transformer, trained under equal compute, achieves competitive accuracy with a state-of-the-art equivariant GNN on OMol25. We find that it learns physically consistent distance-aware patterns without hard-coded priors and exhibits predictable gains with scale—showing that <b>many benefits of GNNs can emerge adaptively in Transformers.</b>
           </div>
         </div>
       </div>
@@ -440,6 +404,15 @@
     });
   </script>
 </div>
+
+<div class="container is-max-desktop">
+  <img id="teaser" src="./images/molecule_fragments.gif" alt="Molecule Fragments" width="100%">
+ </div>
+
+ <div class="container is-max-desktop">
+ <p>Since the Transformer has no explicit hardcoded graph priors, the Transformer learns <b>adaptive attention patterns</b>, like an effective radius cutoff that increases when atoms become farther apart. In contrast, <b>GNNs use a fixed graph construction algorithm</b> that does not adapt to atomic environments.</p>
+</div>
+
 </section>
 
   <section class="section">
@@ -449,11 +422,49 @@
         <div class="column">
 
           <h3 class="title is-4">Comparison to an Equivariant GNN on OMol25</h3>
-          <div class="container is-max-desktop">
+          
+          <p>We compare the energy and force mean absolute errors of a graph-free Transformer to a state-of-the-art equivariant GNN on the OMol25 dataset. <b>Under an equal training compute budget, the Transformer achieves competitive accuracy with the GNN.</b> Given that the model achieves competitive accuracy with the GNN, it provides a good starting point to analyze the interatomic interactions that are learned without graph priors.</p>
+
+          <div style="overflow-x:auto; margin: 1em 0;">
+            <table style="border-collapse: collapse; width: 100%; font-family: sans-serif; text-align: center; border-top: 2px solid black; border-bottom: 2px solid black;">
+              <thead>
+                <tr style="border-bottom: 2px solid black;">
+                  <th style="text-align:left; padding: 6px;">Model</th>
+                  <th>FLOPs</th>
+                  <th>Forward Latency (ms)</th>
+                  <th>Training Speed (atoms/sec)</th>
+                  <th>Energy MAE (meV)</th>
+                  <th>Forces MAE (meV/Å)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #ccc;">
+                  <td style="text-align:left; padding: 6px;">eSEN-sm-d 6M</td>
+                  <td>O(10<sup>20</sup>)</td>
+                  <td>26.3</td>
+                  <td>32k+</td>
+                  <td>129.77</td>
+                  <td>13.01</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left; padding: 6px;">Transformer 1B (Ours)</td>
+                  <td>8.5×10<sup>19</sup></td>
+                  <td>17.2</td>
+                  <td>42k+</td>
+                  <td>117.99</td>
+                  <td>18.35</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          
+          <!-- <div class="container is-max-desktop">
             <img id="teaser" src="./images/omol_table.png" alt="OMol25 Table" width="100%">
-           </div>
+           </div> -->
 
           <h3 class="title is-4">Scaling Laws</h3>
+          <p>Using an unmodified Transformer allows us to leverage mature software and hardware frameworks, enabling us to train a model up to 1B parameters. <b>We find that the Transformer exhibits consistent and predictable gains with respect to scaling training resources</b>, consistent with empirical scaling laws observed in other domains.</p>
            <div class="columns">
             <div class="column is-six-sixteenths">
               <img src="images/model_scaling_omol.png" alt="Model Scaling OMol25" style="width:100%">
@@ -464,6 +475,8 @@
           </div>
 
           <h3 class="title is-4">Attention Patterns</h3>
+
+          <p>The graph-free Transformer naturally learns physically consistent attention patterns from data, such as <b>attention scores that decay inversely with interatomic distance.</b> The absence of the hard-coded graph priors allows the Transformer to <b>learn adaptive attention patterns</b>, such as an effective radius cutoff that increases when atoms become farther apart.</p>
           <div class="columns">
             <div class="column is-six-sixteenths">
               <img src="images/attn_vs_dist_nine_layers.png" alt="Attn vs Dist Nine Layers" style="width:100%">
@@ -475,6 +488,22 @@
 
         </div>
       </div>
+  </section>
+
+  <section class="section">
+    <div class="container is-max-desktop">
+      <h2 class="title is-3">How did we do it?</h2>
+      <div class="content has-text-justified">
+      <p>
+      We simply train an unmodified Transformer on the OMol25 dataset, with the only modification being the addition of a continuous input stream in addition to discrete tokens. The attention mechanism remains completely unchanged. We leverage existing software and hardware for Transformers to efficiently train our models.
+      
+        </p>
+
+        <div class="container is-max-desktop">
+          <img id="teaser" src="./images/teaser.png" alt="Teaser Diagram" width="100%">
+         </div>
+      </div>
+    </div>
   </section>
 
   <section class="section">
