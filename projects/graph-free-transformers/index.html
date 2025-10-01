@@ -170,7 +170,7 @@
               <b>Problem:</b> Can a model without graphs or physical priors learn molecular energies and forces and adaptively discover molecular interactions from data?
               <br>
               <br>
-              <b>Why is this important:</b> GNNs dominate molecular ML but rely on predefined graphs that limit their flexibility and slow down inference.
+              <b>Why is this important:</b> Graph Neural Networks (GNNs) dominate molecular ML but rely on predefined graphs that limit their flexibility and slow down inference.
               <br>
               <br>
               <b>Approach:</b> We show that a graph-free Transformer matches a state-of-the-art equivariant GNN under equal compute, adaptively learns distance-aware patterns, and improves predictably with scale.
@@ -462,7 +462,7 @@
 
           <h3 class="title is-4">➔ Comparison to an Equivariant GNN on OMol25</h3>
           
-          <p>We compare the energy and force mean absolute errors of a graph-free Transformer to a state-of-the-art equivariant GNN on the OMol25 dataset. <b>Under an equal training compute budget, the Transformer achieves competitive accuracy with the GNN.</b> Given that the model achieves competitive accuracy with the GNN, it provides a good starting point to analyze the interatomic interactions that are learned without graph priors.</p>
+          <p>We compare the energy and force mean absolute errors of a graph-free Transformer to a state-of-the-art equivariant GNN on the OMol25 dataset. <b>Under an equal training compute budget, the Transformer achieves competitive accuracy with the GNN.</b> And yes, a 1B parameters Transformer is faster than running a 6M equivariant GNN on modern hardware and software! Given that the model achieves competitive accuracy with the GNN, it provides a good starting point to analyze the interatomic interactions that are learned without graph priors.</p>
 
           <div style="overflow-x:auto; margin: 1em 0;">
             <table style="border-collapse: collapse; width: 100%; font-family: sans-serif; text-align: center; border-top: 2px solid black; border-bottom: 2px solid black;">
