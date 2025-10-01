@@ -36,7 +36,25 @@
   
   <style>
     body {
-      font-size: 1.5rem; /* Increase base font size by 20% */
+      font-size: 1.15rem; /* Increase base font size by 20% */
+    }
+    .highlight-box {
+      background: #f8f9fa;
+      border: 1px solid #e9ecef;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 20px;
+      margin: 10px 0;
+    }
+    .hero {
+      padding: 0 !important;
+    }
+    .hero-body {
+      padding: 1rem 1.5rem !important;
+    }
+    .link-block button {
+      margin-top: 5px;
+      margin-bottom: 5px;
     }
   </style>
 
@@ -49,28 +67,7 @@
 </head>
 <body>
 
-<nav class="navbar" role="navigation" aria-label="main navigation">
-  <div class="navbar-brand">
-    <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false">
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-      <span aria-hidden="true"></span>
-    </a>
-  </div>
-  <div class="navbar-menu">
-    <div class="navbar-start" style="flex-grow: 1; justify-content: center;">
-      <a class="navbar-item" href="https://tkreiman.github.io">
-      <span class="icon">
-          <i class="fas fa-home"></i>
-      </span>
-      </a>
-    </div>
-
-  </div>
-</nav>
-
-
-<section class="hero">
+<section class="hero" style="padding-top: 0.1rem; padding-bottom: 0rem;">
   <div class="hero-body">
     <div class="container is-max-desktop">
       <div class="columns is-centered">
@@ -136,6 +133,15 @@
                   <span>Code coming soon</span>
                   </a>
               </span>
+              <!-- BibTeX Link. -->
+              <span class="link-block">
+                <button id="bibtex-btn" class="external-link button is-normal is-rounded is-dark" onclick="copyBibtex()">
+                  <span class="icon">
+                      <i class="fas fa-copy"></i>
+                  </span>
+                  <span>BibTeX</span>
+                </button>
+              </span>
               <!-- Dataset Link. -->
               <!-- <span class="link-block">
                 <a href="https://github.com/google/nerfies/releases/tag/0.1"
@@ -154,47 +160,50 @@
   </div>
 </section>
 
-
-<section class="section">
+<section class="section" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
     <div class="container is-max-desktop">
-      <h2 class="title is-3">Overview</h2>
+      <!--<h2 class="title is-3">Overview</h2>-->
       <div class="columns">
         <div class="column">
            <div class="content has-text-justified">
-            <br>
-            
-            <b>Problem:</b> Graph Neural Networks (GNNs) are the dominant architecture for molecular machine learning (ML) but depend on <b>predefined graphs</b>, which limit expressivity and slow inference.
-            <br>
-            <br>
-            <b>Investigation:</b> We test if a model trained directly on Cartesian coordinates—<b>without predefined graphs or physical priors</b>—can learn molecular energies and forces, gaining the flexibility to discover interactions from data and opening the door to leverage scaling laws and architectures from broader deep learning.
-            <br>
-            <br>
-            <b>Approach:</b> We demonstrate that a graph-free Transformer, trained under equal compute, achieves competitive accuracy with a state-of-the-art equivariant GNN on OMol25. We find that it learns physically consistent distance-aware patterns without hard-coded priors and exhibits predictable gains with scale—showing that <b>many benefits of GNNs can emerge adaptively in Transformers.</b>
+            <div class="highlight-box">
+              <b>Problem:</b> Can a model without graphs or physical priors learn molecular energies and forces and adaptively discover molecular interactions from data?
+              <br>
+              <br>
+              <b>Why is this important:</b> GNNs dominate molecular ML but rely on predefined graphs that limit their flexibility and slow down inference.
+              <br>
+              <br>
+              <b>Approach:</b> We show that a graph-free Transformer matches a state-of-the-art equivariant GNN under equal compute, adaptively learns distance-aware patterns, and improves predictably with scale.
+            </div>
+
           </div>
         </div>
       </div>
   </section>
 
-
-  <section class="section">
+  <section class="section" style="padding-top: 0.5rem; padding-bottom: 0.5rem;">
     <div class="container is-max-desktop">
 
       <h2 class="title is-3">What Intermolecular Structure Do Graph-Free Transformers Discover?</h2>
       <br>
       <p>
-         We visualize the attention scores from the 4th layer of our Transformer for 3 molecules from the OMol25 validation dataset. <span style="font-weight:bold">Click on an atom</span> to see the learned attention scores for that atom. Red is <span style="color:red; font-weight:bold">more attention</span>,
-         blue is <span style="color:blue; font-weight:bold">less attention</span>.
+         We visualize the attention scores from the 4th layer of our Transformer for 3 molecules from the OMol25 validation dataset. <span style="font-weight:bold">Click on an atom</span> to see the learned attention scores for that atom. Darker purple indicates <span style="color:purple; font-weight:bold">more attention</span>.
       </p>
        
        <!-- Interactive Molecule Viewer -->
        <div style="margin: 20px 0; padding: 20px; background: #f8f9fa; border-radius: 12px; border: 2px solid #e9ecef; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-         <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
-           <h4 style="margin: 0; color: #333; font-size: 20px;">Select Molecule:</h4>
-           <select id="molecule-selector" style="padding: 12px 18px; border: 2px solid #007bff; border-radius: 6px; font-size: 18px; background: white; cursor: pointer; transition: all 0.2s; min-height: 44px; -webkit-appearance: none; -moz-appearance: none; appearance: none;">
-             <option value="1">Molecule 1</option>
-             <option value="2">Molecule 2</option>
-             <option value="3">Molecule 3</option>
-           </select>
+         <div style="margin-bottom: 15px;">
+           <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Select Molecule:</h4>
+           <div style="display: flex; gap: 10px; overflow-x: auto; padding-bottom: 5px; scrollbar-width: thin;">
+             <button id="molecule-btn-1" class="molecule-btn active" data-molecule="1" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: #007bff; color: white; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 1</button>
+             <button id="molecule-btn-2" class="molecule-btn" data-molecule="2" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 2</button>
+             <button id="molecule-btn-3" class="molecule-btn" data-molecule="3" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 3</button>
+             <button id="molecule-btn-4" class="molecule-btn" data-molecule="4" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 4</button>
+             <button id="molecule-btn-5" class="molecule-btn" data-molecule="5" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 5</button>
+             <button id="molecule-btn-6" class="molecule-btn" data-molecule="6" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 6</button>
+             <button id="molecule-btn-7" class="molecule-btn" data-molecule="7" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 7</button>
+             <button id="molecule-btn-8" class="molecule-btn" data-molecule="8" style="padding: 12px 20px; border: 2px solid #007bff; border-radius: 6px; font-size: 16px; background: white; color: #007bff; cursor: pointer; transition: all 0.2s; min-height: 44px; flex-shrink: 0;">Molecule 8</button>
+           </div>
          </div>
          <div style="border-top: 1px solid #dee2e6; padding-top: 15px;">
            <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Chemical Formula: <span id="chemical-formula" style="font-weight: bold; color: #007bff;">Loading...</span></h4>
@@ -227,10 +236,10 @@
         this.atomColor = function (atom) {
           if (!currentWeights || !atom || atom.index >= currentWeights.length) return 0x808080;
           var v = currentWeights[atom.index] || 0.0; // assume already normalized [0,1]
-          // v=0 => red (255,0,0), v=1 => blue (0,0,255)
-          var r = Math.round(255 * (1 - v));
-          var g = 0;
-          var b = Math.round(255 * v);
+          // v=0 => dark purple (100,0,100), v=1 => white (255,255,255)
+          var r = Math.round(100 * (1 - v) + 255 * v);
+          var g = Math.round(0 * (1 - v) + 255 * v);
+          var b = Math.round(100 * (1 - v) + 255 * v);
           return (r << 16) | (g << 8) | b;
         };
       });
@@ -319,11 +328,26 @@
             radiusScale: 0.175,
             bondScale: 0.8
           });
-          stage.autoView();
+            stage.autoView();
+            
+            // Zoom in more after auto view
+            setTimeout(function() {
+              // Try different zoom methods
+              try {
+                stage.viewer.controls.zoom(0.7); // Moderate zoom in
+              } catch (e) {
+                // Alternative: adjust camera distance
+                var camera = stage.viewer.camera;
+                if (camera) {
+                  camera.position.multiplyScalar(0.7); // Move camera closer moderately
+                  camera.updateProjectionMatrix();
+                }
+              }
+            }, 0);
 
           // Enable automatic rotation using NGL's built-in feature
-          stage.setSpin(true);           // start spinning
-          stage.setSpin([0, 1, 0], 0.5);  // axis [x,y,z], speed in revolutions/sec
+          //stage.setSpin(true);           // start spinning
+          //stage.setSpin([0, 1, 0], 0.5);  // axis [x,y,z], speed in revolutions/sec
 
           // Function to handle atom selection (used by both click and touch)
           function handleAtomSelection(pickingProxy) {
@@ -394,10 +418,25 @@
         });
       }
 
-      // Add dropdown event listener
-      document.getElementById('molecule-selector').addEventListener('change', function() {
-        loadMolecule(this.value);
-      });
+         // Add button event listeners
+         document.querySelectorAll('.molecule-btn').forEach(function(btn) {
+           btn.addEventListener('click', function() {
+             // Remove active class from all buttons
+             document.querySelectorAll('.molecule-btn').forEach(function(b) {
+               b.classList.remove('active');
+               b.style.background = 'white';
+               b.style.color = '#007bff';
+             });
+             
+             // Add active class to clicked button
+             this.classList.add('active');
+             this.style.background = '#007bff';
+             this.style.color = 'white';
+             
+             // Load the selected molecule
+             loadMolecule(this.getAttribute('data-molecule'));
+           });
+         });
 
       // Load initial molecule
       loadMolecule("1");
@@ -421,7 +460,7 @@
       <div class="columns">
         <div class="column">
 
-          <h3 class="title is-4">Comparison to an Equivariant GNN on OMol25</h3>
+          <h3 class="title is-4">➔ Comparison to an Equivariant GNN on OMol25</h3>
           
           <p>We compare the energy and force mean absolute errors of a graph-free Transformer to a state-of-the-art equivariant GNN on the OMol25 dataset. <b>Under an equal training compute budget, the Transformer achieves competitive accuracy with the GNN.</b> Given that the model achieves competitive accuracy with the GNN, it provides a good starting point to analyze the interatomic interactions that are learned without graph priors.</p>
 
@@ -463,8 +502,9 @@
             <img id="teaser" src="./images/omol_table.png" alt="OMol25 Table" width="100%">
            </div> -->
 
-          <h3 class="title is-4">Scaling Laws</h3>
+          <h3 class="title is-4">➔ Scaling Laws</h3>
           <p>Using an unmodified Transformer allows us to leverage mature software and hardware frameworks, enabling us to train a model up to 1B parameters. <b>We find that the Transformer exhibits consistent and predictable gains with respect to scaling training resources</b>, consistent with empirical scaling laws observed in other domains.</p>
+          <br>
            <div class="columns">
             <div class="column is-six-sixteenths">
               <img src="images/model_scaling_omol.png" alt="Model Scaling OMol25" style="width:100%">
@@ -474,9 +514,10 @@
             </div>
           </div>
 
-          <h3 class="title is-4">Attention Patterns</h3>
+          <h3 class="title is-4">➔ Attention Patterns</h3>
 
           <p>The graph-free Transformer naturally learns physically consistent attention patterns from data, such as <b>attention scores that decay inversely with interatomic distance.</b> The absence of the hard-coded graph priors allows the Transformer to <b>learn adaptive attention patterns</b>, such as an effective radius cutoff that increases when atoms become farther apart.</p>
+          <br>
           <div class="columns">
             <div class="column is-six-sixteenths">
               <img src="images/attn_vs_dist_nine_layers.png" alt="Attn vs Dist Nine Layers" style="width:100%">
@@ -495,13 +536,18 @@
       <h2 class="title is-3">How did we do it?</h2>
       <div class="content has-text-justified">
       <p>
-      We simply train an unmodified Transformer on the OMol25 dataset, with the only modification being the addition of a continuous input stream in addition to discrete tokens. The attention mechanism remains completely unchanged. We leverage existing software and hardware for Transformers to efficiently train our models.
-      
+      We simply train a standard Transformer on the OMol25 dataset, using the following discretization scheme:
         </p>
 
         <div class="container is-max-desktop">
-          <img id="teaser" src="./images/teaser.png" alt="Teaser Diagram" width="100%">
+          <img id="teaser" src="./images/discretization_scheme_2.png" alt="Teaser Diagram" width="100%">
          </div>
+         <br>
+         <p>Our only modification to the architecture is the addition of a continuous input stream in addition to discrete tokens. <b>The attention mechanism remains completely unchanged.</b> We leverage existing software and hardware for Transformers to efficiently train our models.</p>
+          <div class="container is-max-desktop" style="text-align: center;">
+           <img id="teaser" src="./images/model_fig_2.png" alt="Teaser Diagram" width="30%">
+          </div>
+          <p> During pre-training, the model learns to autoregressively predict the discrete tokens. We then replace the causal attention mask with a bi-directional attention mask and fine-tune the model on the energy and force targets using only continuous inputs and outputs.</p>
       </div>
     </div>
   </section>
@@ -547,6 +593,34 @@
     </div>
   </div>
 </footer>
+
+<script>
+function copyBibtex() {
+  const bibtex = `@article{kreiman2024transformers,
+  title={Transformers Discover Molecular Structure Without Graph Priors},
+  author={Kreiman, Tobias and Bai, Yutong and Atieh, Fadi and Weaver, Elizabeth and Qu, Eric and Krishnapriyan, Aditi S},
+  journal={arXiv preprint arXiv:XXXX.XXXXX},
+  year={2025}
+}`;
+  
+  navigator.clipboard.writeText(bibtex).then(function() {
+    // Change button text temporarily to show success
+    const btn = document.getElementById('bibtex-btn');
+    const originalText = btn.querySelector('span:last-child').textContent;
+    btn.querySelector('span:last-child').textContent = 'Copied!';
+    btn.style.backgroundColor = '#28a745';
+    
+    // Reset after 2 seconds
+    setTimeout(function() {
+      btn.querySelector('span:last-child').textContent = originalText;
+      btn.style.backgroundColor = '';
+    }, 2000);
+  }).catch(function(err) {
+    console.error('Failed to copy BibTeX: ', err);
+    alert('Failed to copy BibTeX to clipboard');
+  });
+}
+</script>
 
 </body>
 </html>
