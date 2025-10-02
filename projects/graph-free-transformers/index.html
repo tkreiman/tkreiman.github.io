@@ -462,7 +462,7 @@
 
           <h3 class="title is-4">➔ Comparison to an Equivariant GNN on OMol25</h3>
           
-          <p>We compare the energy and force mean absolute errors of a graph-free Transformer to a state-of-the-art equivariant GNN on the OMol25 dataset. <b>Under an equal training compute budget, the Transformer achieves competitive accuracy with the GNN.</b> And yes, a 1B parameters Transformer is faster than running a 6M equivariant GNN on modern hardware and software! Given that the model achieves competitive accuracy with the GNN, it provides a good starting point to analyze the interatomic interactions that are learned without graph priors.</p>
+          <p>We compare the energy and force mean absolute errors of a graph-free Transformer to a state-of-the-art equivariant GNN on the OMol25 dataset. <b>Under an equal training compute budget, the Transformer achieves competitive accuracy with the GNN.</b> Given that the model achieves competitive accuracy with the GNN, it provides a good starting point to analyze the interatomic interactions that are learned without graph priors.</p>
 
           <div style="overflow-x:auto; margin: 1em 0;">
             <table style="border-collapse: collapse; width: 100%; font-family: sans-serif; text-align: center; border-top: 2px solid black; border-bottom: 2px solid black;">
@@ -470,8 +470,6 @@
                 <tr style="border-bottom: 2px solid black;">
                   <th style="text-align:left; padding: 6px;">Model</th>
                   <th>FLOPs</th>
-                  <th>Forward Latency (ms)</th>
-                  <th>Training Speed (atoms/sec)</th>
                   <th>Energy MAE (meV)</th>
                   <th>Forces MAE (meV/Å)</th>
                 </tr>
@@ -480,18 +478,40 @@
                 <tr style="border-bottom: 1px solid #ccc;">
                   <td style="text-align:left; padding: 6px;">eSEN-sm-d 6M</td>
                   <td>O(10<sup>20</sup>)</td>
-                  <td>26.3</td>
-                  <td>32k+</td>
                   <td>129.77</td>
                   <td>13.01</td>
                 </tr>
                 <tr>
                   <td style="text-align:left; padding: 6px;">Transformer 1B (Ours)</td>
                   <td>8.5×10<sup>19</sup></td>
-                  <td>17.2</td>
-                  <td>42k+</td>
                   <td>117.99</td>
                   <td>18.35</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+          <p>Interestingly, <b>a 1B parameters Transformer is faster than running a 6M equivariant GNN</b> since it leverages modern hardware and software frameworks!</p>
+
+          <div style="overflow-x:auto; margin: 1em 0;">
+            <table style="border-collapse: collapse; width: 100%; font-family: sans-serif; text-align: center; border-top: 2px solid black; border-bottom: 2px solid black;">
+              <thead>
+                <tr style="border-bottom: 2px solid black;">
+                  <th style="text-align:left; padding: 6px;">Model</th>
+                  <th>Forward Latency (ms)</th>
+                  <th>Training Speed (atoms/sec)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="border-bottom: 1px solid #ccc;">
+                  <td style="text-align:left; padding: 6px;">eSEN-sm-d 6M</td>
+                  <td>26.3</td>
+                  <td>32k+</td>
+                </tr>
+                <tr>
+                  <td style="text-align:left; padding: 6px;">Transformer 1B (Ours)</td>
+                  <td>17.2</td>
+                  <td>42k+</td>
                 </tr>
               </tbody>
             </table>
