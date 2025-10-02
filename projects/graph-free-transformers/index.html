@@ -213,7 +213,7 @@
          </div>
          <div style="border-top: 1px solid #dee2e6; padding-top: 15px; margin-top: 15px;">
            <div style="background:#eaeaea; border-radius:12px; padding:12px;">
-             <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Click Atoms to See Learned Attention Scores (Desktop Only):</h4>  
+             <h4 style="margin: 0 0 10px 0; color: #333; font-size: 20px;">Click Atoms to See Learned Attention Scores:</h4>  
              <div id="viewport" style="width:100%; height:400px;"></div>
 
            </div>
@@ -230,6 +230,89 @@
       var autoRotate = true;   // enable automatic rotation
       var isUserInteracting = false; // track if user is interacting
       var currentMolecule = "1"; // current selected molecule
+      var touchStartPos = null; // track touch state to distinguish tap from drag
+
+      // Function to add touch event listeners to the canvas
+      function addTouchListeners() {
+        var canvas = stage.viewer.renderer.domElement;
+        
+        // Remove existing listeners to avoid duplicates
+        canvas.removeEventListener('touchstart', handleTouchStart);
+        canvas.removeEventListener('touchend', handleTouchEnd);
+        
+        // Add new listeners
+        canvas.addEventListener('touchstart', handleTouchStart, { passive: true });
+        canvas.addEventListener('touchend', handleTouchEnd, { passive: false });
+      }
+
+      // Touch start handler
+      function handleTouchStart(event) {
+        if (event.touches.length === 1) {
+          var touch = event.touches[0];
+          touchStartPos = { x: touch.clientX, y: touch.clientY };
+        } else {
+          // Multi-touch (pinch/rotate) - don't track for tap
+          touchStartPos = null;
+        }
+      }
+
+      // Touch end handler
+      function handleTouchEnd(event) {
+        if (event.changedTouches.length > 0 && touchStartPos && event.touches.length === 0) {
+          var touch = event.changedTouches[0];
+          
+          // Check if this was a tap (not a drag/rotate)
+          var dx = touch.clientX - touchStartPos.x;
+          var dy = touch.clientY - touchStartPos.y;
+          var distance = Math.sqrt(dx * dx + dy * dy);
+          
+          if (distance < 20) { // 20px threshold to allow for slight movement
+            console.log("Tap detected at client coords", touch.clientX, touch.clientY);
+            
+            var canvas = stage.viewer.renderer.domElement;
+            
+            // Simulate a complete mouse click sequence that NGL expects
+            var mouseDownEvent = new MouseEvent('mousedown', {
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              button: 0,
+              buttons: 1,
+              bubbles: true,
+              cancelable: true
+            });
+            
+            var mouseUpEvent = new MouseEvent('mouseup', {
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              button: 0,
+              buttons: 0,
+              bubbles: true,
+              cancelable: true
+            });
+            
+            var clickEvent = new MouseEvent('click', {
+              clientX: touch.clientX,
+              clientY: touch.clientY,
+              button: 0,
+              buttons: 0,
+              bubbles: true,
+              cancelable: true
+            });
+            
+            // Dispatch events in proper sequence
+            canvas.dispatchEvent(mouseDownEvent);
+            canvas.dispatchEvent(mouseUpEvent);
+            canvas.dispatchEvent(clickEvent);
+            
+            console.log("Dispatched synthetic mouse events");
+          }
+          
+          touchStartPos = null;
+        }
+        
+        // Prevent default after our handling to avoid ghost clicks
+        event.preventDefault();
+      }
 
       // Red -> Blue color scheme by attention (red=low, blue=high)
       var schemeId = NGL.ColormakerRegistry.addScheme(function () {
@@ -394,7 +477,7 @@
           }
 
           // Override default left-click behavior (which centers view) to recolor by attention
-          try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
+          /*try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
           stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
             console.log("Mouse click detected");
             handleAtomSelection(pickingProxy);
@@ -405,7 +488,16 @@
           stage.mouseControls.add("touchPick", function (stg, pickingProxy) {
             console.log("Touch pick detected");
             handleAtomSelection(pickingProxy);
+          });*/
+          // Override default left-click behavior (which centers view) to recolor by attention
+          try { stage.mouseControls.remove("clickPick-left"); } catch (e) {}
+          stage.mouseControls.add("clickPick-left", function (stg, pickingProxy) {
+            console.log("Mouse click detected");
+            handleAtomSelection(pickingProxy);
           });
+
+          // Add touch event listeners after molecule is loaded
+          addTouchListeners();
           
           // Load attention matrix JSON
           fetch(attnFile)
