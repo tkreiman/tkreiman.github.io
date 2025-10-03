@@ -583,7 +583,7 @@
             </table>
           </div>
           
-          <p>Interestingly, <b>a 1B parameters Transformer is faster than running a 6M equivariant GNN</b> since it leverages modern hardware and software frameworks!</p>
+          <p>Interestingly, <b>a 1B parameter Transformer is faster than running a 6M parameter equivariant GNN</b> since it leverages modern hardware and software frameworks!</p>
 
           <div style="overflow-x:auto; margin: 1em 0;">
             <table style="border-collapse: collapse; width: 100%; font-family: sans-serif; text-align: center; border-top: 2px solid black; border-bottom: 2px solid black;">
@@ -683,7 +683,12 @@
 <section class="section" id="BibTeX">
   <div class="container is-max-desktop content">
     <h2 class="title">BibTeX</h2>
-    <pre><code></code></pre>
+    <pre><code>@article{kreiman2025transformers,
+      title={Transformers Discover Molecular Structure Without Graph Priors},
+      author={Kreiman, Tobias and Bai, Yutong and Atieh, Fadi and Weaver, Elizabeth and Qu, Eric and Krishnapriyan, Aditi S},
+      journal={arXiv preprint arXiv:2510.02259},
+      year={2025}
+      }</code></pre>
   </div> 
 </section>
 
@@ -708,11 +713,11 @@
 
 <script>
 function copyBibtex() {
-  const bibtex = `@article{kreiman2024transformers,
-  title={Transformers Discover Molecular Structure Without Graph Priors},
-  author={Kreiman, Tobias and Bai, Yutong and Atieh, Fadi and Weaver, Elizabeth and Qu, Eric and Krishnapriyan, Aditi S},
-  journal={arXiv preprint arXiv:XXXX.XXXXX},
-  year={2025}
+  const bibtex = `@article{kreiman2025transformers,
+title={Transformers Discover Molecular Structure Without Graph Priors},
+author={Kreiman, Tobias and Bai, Yutong and Atieh, Fadi and Weaver, Elizabeth and Qu, Eric and Krishnapriyan, Aditi S},
+journal={arXiv preprint arXiv:2510.02259},
+year={2025}
 }`;
   
   navigator.clipboard.writeText(bibtex).then(function() {
